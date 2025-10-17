@@ -13,3 +13,9 @@ vendor/
 
 # Logs
 *.log
+
+# API key
+description.txt
+post
+
+

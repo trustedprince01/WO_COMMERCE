@@ -14,6 +14,7 @@ Pictufy Integration is a WordPress plugin that syncs curated content from the Pi
 1. Copy the plugin folder into `wp-content/plugins/`.
 2. Activate **Pictufy Integration** from the Plugins screen.
 3. (Optional) Visit Settings → Permalinks and click **Save** to ensure page rewrites are refreshed.
+4. Replace the placeholder API key in `pictufy-integration.php` (`class Pictufy_API::$api_key`) with the key provided by Pictufy before going live.
 
 ## Cleanup Automation
 - **Automatic schedule:** When the plugin activates, `pictufy_schedule_expired_cleanup()` registers the `pictufy_expired_artworks_cleanup` event to run weekly.

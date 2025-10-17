@@ -1053,7 +1053,7 @@ add_action('template_redirect', 'pictufy_render_artist_template');
 
 class Pictufy_API {
     private $api_url = 'https://pictufy.com/api/';
-    private $api_key = '16d954f0b326c3d57090e86c7ehd95a46a7ee53976c00181320a886c787751bc';
+    private $api_key = 'use_your_own_api_key';
 
     public function request($endpoint, $method = 'POST', $body = array()) {
         $args = array(
