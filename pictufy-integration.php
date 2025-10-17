@@ -242,8 +242,10 @@ function pictufy_render_artists_script() {
                     }
 
                     const createCard = (item) => {
-                        const card = document.createElement('div');
+                        const card = document.createElement('a');
                         card.className = 'artist-item';
+                        card.href = item.detail_url || '#';
+                        card.dataset.artist = JSON.stringify(item);
 
                         if (item.image) {
                             const img = document.createElement('img');
@@ -310,8 +312,30 @@ function pictufy_render_artists_script() {
                         }
                     };
 
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach((entry) => {
+                            if (entry.isIntersecting) {
+                                renderMore();
+                            }
+                        });
+                    }, {
+                        rootMargin: '200px 0px',
+                        threshold: 0,
+                    });
+
+                    const attachAutoLoad = () => {
+                        if (loadMoreButton) {
+                            observer.observe(loadMoreButton);
+                        }
+                    };
+
                     if (loadMoreButton) {
                         loadMoreButton.addEventListener('click', renderMore);
+                        attachAutoLoad();
+                    }
+
+                    if (!loadMoreButton) {
+                        renderMore();
                     }
                 });
             };
@@ -3156,13 +3180,53 @@ function pictufy_render_styles($section) {
             .pictufy-modal-window {
                 flex-direction: column;
                 align-items: stretch;
-                padding: 24px;
+                padding: 20px;
+                width: calc(100% - 24px);
+                border-radius: 18px;
+                max-height: calc(100vh - 40px);
+                overflow-y: auto;
             }
             .pictufy-modal-body {
                 flex-direction: column;
+                gap: 20px;
             }
             .pictufy-modal-media img {
-                max-height: none;
+                max-height: 260px;
+                width: 100%;
+                object-fit: cover;
+            }
+        }
+        @media (max-width: 600px) {
+            .pictufy-modal-window {
+                padding: 16px;
+                border-radius: 14px;
+                max-height: calc(100vh - 32px);
+            }
+            .pictufy-modal-close {
+                top: 10px;
+                right: 10px;
+                width: 34px;
+                height: 34px;
+            }
+            .pictufy-modal-info h3 {
+                font-size: 22px;
+            }
+            .pictufy-modal-artist {
+                font-size: 14px;
+            }
+            .pictufy-modal-details li {
+                font-size: 14px;
+            }
+            .pictufy-modal-tags {
+                gap: 6px;
+            }
+            .pictufy-modal-tags span {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+            .pictufy-modal-actions a {
+                width: 100%;
+                text-align: center;
             }
         }
         <?php endif; ?>
