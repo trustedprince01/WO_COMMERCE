@@ -1,0 +1,460 @@
+Pictufy Reseller API
+Technical Documentation of the Pictufy reseller API for third party implementation
+Table of contents
+General
+Authentication
+/collections
+/collectioncategories
+/categories
+/artworks
+/artwork
+/artists
+/artist
+/lists
+/expired
+/download
+Language codes
+General
+Pictufy Reseller API is based on the RESTful architecture and returns data in JSON format. Requests are made with HTTP POST requests to https://pictufy.com/api/endpoint
+Authentication
+Authentication is made by sending the HTTP header X-AUTH-KEY with the value of your unique API key found in "Settings".
+/collections
+Returns collections curated by our curators
+Input parameters
+collection_category
+POSTstring (32)Not required
+Specify a specific collection category ID to retrieve
+order
+POSTstring (25)Not required
+Valid values   alphaartwork_countcurated
+Ordering, can be either "alpha", "artwork_count" or "curated" - default is "curated"
+with_ids
+POSTintNot required
+If set to 1, you will also get all artwork ids for each category in right order (request takes up to 30 seconds)
+skip_categories
+POSTintNot required
+If set to 1, you will not get the collection category structure but instead all published collections
+Example output
+$ curl -H "X-AUTH-KEY: YOUR_API_KEY" -X POST "https://pictufy.com/api/collections/" -F "order=artwork_count"
+
+{
+    "endpoint": "collections",
+    "items": [
+        {
+            "category_id": "fad500ca8e8f76f04037b6d32aa4a3f7",
+            "category_name": "Trending",
+            "collections": [
+                {
+                    "id": "4d0442f3e683553fbb0048c4403ed296",
+                    "name": "All Time Bestsellers",
+                    "url": "https://pictufy.com/collection/all-time-bestsellers",
+                    "thumb": "https://seuppcdn01.1x.com/images/user/bbf35eb2dec862f58d48159ea6d21e97-ld.jpg",
+                    "cover": "https://1x.com/images/collectioncover/612d677dd882ab3cb53bf14943bd9462.jpg",
+                    "artworks": 1000,
+                    "description": "1000 Topsellers"
+                },
+                {
+                    "id": "6a66328e2611fbc60a53f6c7ab1f0feb",
+                    "name": "Treechild",
+                    "url": "https://pictufy.com/collection/treechild",
+                    "thumb": "https://seuppcdn01.1x.com/images/user/d15335b3d0c847e5f54b282ca3b700dd-ld.jpg",
+                    "artworks": 349,
+                    "description": "Browse and enjoy awesome artworks from featured artist Treechild"
+                }
+            ]
+        }
+    ],
+    "status": {
+        "returned_items": 2,
+        "code": 200
+    }
+}
+Back to top
+/collectioncategories
+Returns a list of collection categories
+Example output
+$ curl -H "X-AUTH-KEY: YOUR_API_KEY" -X POST "https://pictufy.com/api/collectioncategories/"
+
+{
+    "endpoint": "collectioncategories",
+    "items": [
+        {
+            "category_id": "7ef08d719dfcf4c927493fb9a2058c85",
+            "category_name": "Animals"
+        },
+        {
+            "category_id": "911e40f18fae5488c59e6d7c767110e6",
+            "category_name": "Bestsellers"
+        }
+    ],
+    "status": {
+        "returned_items": 2,
+        "code": 200
+    }
+}
+Back to top
+/categories
+Returns artwork categories
+Example output
+$ curl -H "X-AUTH-KEY: YOUR_API_KEY" -X POST "https://pictufy.com/api/categories/"
+
+{
+    "endpoint": "categories",
+    "items": {
+        "photography": [
+            {
+                "category_id": 15,
+                "category_name": "Abstract"
+            }
+	],
+        "illustration": [
+            {
+                "category_id": 22,
+                "category_name": "Abstract"
+            }
+	]
+    },
+    "status": {
+        "returned_items": 2,
+        "code": 200
+    }
+}
+Back to top
+/artworks
+Returns artworks
+Input parameters
+page
+POSTintNot required
+Page of results to return - default is 1 which returns the first n artworks where n is value of per_page
+per_page
+POSTintNot required
+Artworks returned per page - default is 30
+from_timestamp
+POSTintNot required
+Return only artworks published after this UNIX timestamp
+grade
+POSTintNot required
+Minimum required curator grade (1-6)
+order
+POSTstring (25)Not required
+Valid values   recommendedrecently_addedbest_sellingtrendingoldest_first
+Ordering, can be either "recommended", "recently_added", "oldest_first", "best_selling" or "trending" - default is "recommended"
+artwork_type
+POSTstring (25)Not required
+Valid values   photographyillustrationwall_mural
+Limit results to artwork type, can be either "photography", "illustration" or "wall_mural"
+geometry
+POSTstring (25)Not required
+Valid values   horizontalverticalsquarepanorama
+Limit results to geometry, can be either "horizontal", "vertical", "square" or "panorama"
+color
+POSTstring (25)Not required
+Valid values   redorangeyellowgreenturquoisebluelilacpinkhighkeylowkey
+Limit results to a certain main color
+aspect_ratio
+POSTcharNot required
+Valid values   3:24:35:4
+Force a specific aspect ratio
+resolution
+POSTintNot required
+Minimum resolution of artworks in megapixels
+people
+POSTstring (25)Not required
+Valid values   personpeopleno_people
+Can be either "person" (just one person), "people" (several people) or "no_people" (artworks without people)
+buildings
+POSTstring (25)Not required
+Valid values   yesinteriorstructureno
+Can be either "yes" (only artworks with buildings), "interior" (only artworks of interior), "structure" (only artworks of structures) or "no" (only artworks without building details or interior)
+animals
+POSTstring (25)Not required
+Valid values   yeswildlifeinsectsno
+Can be either "yes" (require animals/wildlife/insects in results), "wildlife" (only artworks with wildlife motifs), "insects" (only artworks with insects) or "no" (only artworks without animals/wildlife/insects)
+nudity
+POSTstring (25)Not required
+Valid values   hideyes
+Can be either "hide" (do not return artworks with nudity) or "yes" (only return artworks with nudity)
+ignore_quality_check
+POSTboolNot required
+If set to true/1, return all artworks regardless of print file quality
+category
+POSTintNot required
+Return only artworks of a certain category
+collection_id
+POSTstring (32)Not required
+Return only artworks in a certain collection, either by ID or URL
+list_id
+POSTstring (32)Not required
+Return only artworks in a certain list
+artist_id
+POSTintNot required
+Return only artworks by a certain artist
+search
+POSTstring (100)Not required
+Return only artworks that matches the search string in either keywords or title
+autodetect_language
+POSTboolNot required
+If set to true/1, language in search string will be autodetected
+artwork_ids
+POSTtextNot required
+Search for a list of artwork ids separated by comma
+custom_interiors
+POSTboolNot required
+If set to true/1, only custom interiors will be returned
+Example output
+$ curl -H "X-AUTH-KEY: YOUR_API_KEY" -X POST "https://pictufy.com/api/artworks/" -F "page=1" -F "per_page=1"
+
+{
+    "endpoint": "artworks",
+    "items": [
+        {
+            "id": "2500885",
+            "artwork_type": "wall_mural",
+            "artist": "Ana Rut Bre",
+            "artist_id": 822783,
+            "title": {
+                "en": "Bauhaus Fun"
+            },
+            "keywords": {
+                "en": "BAUHAUS,GEOMETRY,VINTAGE,MID CENTURY,MODERN,NORDIC,SCANDI,COLORFUL,INTERIOR,GRAPHIC DESIGN,VINTAGE,RETRO,SHAPES,VECTOR,GRAPHIC,DESIGN,ART DECO,COLOR,ABSTRACT,PATTERN,SHAPE,FORM,GEOMETRIC,ILLUSTRATION,POSTER,GEOMETRIC DESIGN,NOSTALGIA,MIDCENTURY,MID-CENTURY,ABSTRACTION,COLORS,COLOUR,COLOURFUL"
+            },
+            "category": "Geometric",
+            "category_id": 34,
+            "quality": "Good",
+            "has_people": 0,
+            "has_buildings": 0,
+            "has_animals": 0,
+            "is_inside": 0,
+            "width": 8000,
+            "height": 12000,
+            "grade": 4,
+            "color": {
+                "red": false,
+                "orange": false,
+                "yellow": false,
+                "green": false,
+                "turquoise": false,
+                "blue": false,
+                "lilac": false,
+                "pink": false,
+                "highkey": false,
+                "lowkey": false
+            },
+            "geometry": "horizontal,panorama",
+            "urls": {
+                "img_thumb_square": "https://1x.com/images/user/64763ba724e1e1e34682b942ae0fd2ae-sq.jpg",
+                "img_thumb": "https://1x.com/images/user/64763ba724e1e1e34682b942ae0fd2ae-ld.jpg",
+                "img_medium": "https://1x.com/images/user/64763ba724e1e1e34682b942ae0fd2ae-sd.jpg",
+                "img_high": "https://1x.com/images/user/64763ba724e1e1e34682b942ae0fd2ae-hd2.jpg",
+                "wall_preview": "https://pictufy.com/api/img.php?id=64763ba724e1e1e34682b942ae0fd2ae",
+                "wall_preview_without_border": "https://pictufy.com/api/img-noborder.php?id=17ed4a5220500a47b4ebb7f61617b626"
+                "interiors": {
+                    "28": {
+                        "short-name": "pictufy-kidsroom-bear-beige-5x7",
+                        "url": "https://pictufy.com/api/interiors.php?p=2772170&i=28"
+                    },
+                    "31": {
+                        "short-name": "pictufy-scandinavian-armchair-interior-ratio-5x7",
+                        "url": "https://pictufy.com/api/interiors.php?p=2772170&i=31"
+                    }
+                }
+            }
+    ],
+    "status": {
+        "returned_items": 1,
+        "code": 200
+    }
+}
+Back to top
+/artwork
+Returns details about a specific artwork
+Input parameters
+artwork_id
+POSTintRequired
+ID of artwork to get details for
+translate
+POSTboolNot required
+If set to true/1, metadata will be translated
+languages
+POSTstring (100)Not required
+Translate title and keywords into other languages by suppling language codes separated with comma (see Language codes below) - default is the languages configured in Settings on Pictufy
+Example output
+$ curl -H "X-AUTH-KEY: YOUR_API_KEY" -X POST "https://pictufy.com/api/artwork/" -F "artwork_id=2401315" -F "languages=de,es"
+
+{
+    "endpoint": "artwork",
+    "items": [
+        {
+            "id": "2401315",
+    	    "artwork_type": "photography",
+            "artwork_published": "2024-01-17 15:49:03",
+            "artist": "Ojenike Oladapo",
+            "artist_id": 817297,
+            "title": {
+                "en": "Wolf",
+                "de": "Wolf",
+                "es": "Lobo"
+            },
+            "keywords": {
+                "en": "BW,BLACK AND WHITE,MONOCHROME,PORTRAIT,FIGURATIVE,FACE,STUDIO,BLACK BACKGROUND,DARK BACKGROUND,NO BACKGROUND,PLAIN BACKGROUND,DARK,LOW KEY,LOW-KEY,INDOOR,INDOORS,WOLF,WOLVES,ANIMAL,ANIMALS,QUOTE,TYPOGRAPHY,TEXT,WORDS,MOTIVATIONAL,QUOTES,WORD,INSPIRATION,INSPIRATIONAL,GRAPHIC,ILLUSTRATION,WILD,WILDLIFE,NATURE,ANIMAL PORTRAIT,ANIMAL PORTRAITS",
+                "de": "SW,SCHWARZWEISS,MONOCHROM,PORTRAIT,FIGURATIV,GESICHT,STUDIO,SCHWARZER HINTERGRUND,DUNKLER HINTERGRUND,OHNE HINTERGRUND,EINFACHER HINTERGRUND,DUNKEL,LOW KEY,LOW-KEY,INNEN,INNEN,WOLF,W\u00d6LFE,TIER,TIERE,ZITAT ,TYPOGRAFIE,TEXT,W\u00d6RTER,MOTIVATION,ZITATE,WORT,INSPIRATION,INSPIRATION,GRAFIK,ILLUSTRATION,WILD,WILDLIFE,NATUR,TIERPORTRAIT,TIERPORTRAITS",
+                "es": "B/N, BLANCO Y NEGRO, MONOCROMO, RETRATO, FIGURATIVO, CARA, ESTUDIO, FONDO NEGRO, FONDO OSCURO, SIN FONDO, FONDO LISO, OSCURO, CLAVE BAJA, CLAVE BAJA, INTERIOR, INTERIOR, LOBO, LOBOS, ANIMAL, ANIMALES, CITA ,TIPOGRAF\u00cdA,TEXTO,PALABRAS,MOTIVACIONAL,CITA,PALABRA,INSPIRACI\u00d3N,INSPIRACIONAL,GR\u00c1FICO,ILUSTRACI\u00d3N,SILVAJE,FAUNA,NATURALEZA,RETRATO DE ANIMALES,RETRATOS DE ANIMALES"
+            },
+            "category": "Wildlife",
+            "category_id": 5,
+            "quality": "Good",
+            "has_people": 1,
+            "has_buildings": 0,
+            "has_animals": 1,
+      	    "has_nudity": 0,
+            "is_inside": 0,
+            "width": 3600,
+            "height": 4800,
+            "grade": 3,
+            "urls": {
+                "img_thumb_square": "https://1x.com/images/user/4516f59bf43805278f9768f147b5f19d-sq.jpg",
+                "img_thumb": "https://1x.com/images/user/4516f59bf43805278f9768f147b5f19d-ld.jpg",
+                "img_medium": "https://1x.com/images/user/4516f59bf43805278f9768f147b5f19d-sd2.jpg",
+                "img_high": "https://1x.com/images/user/4516f59bf43805278f9768f147b5f19d-hd2.jpg"
+            }
+        }
+    ],
+    "status": {
+        "returned_items": 1,
+        "code": 200
+    }
+}
+Back to top
+/artists
+Returns featured Pictufy artists
+Input parameters
+order
+POSTstring (25)Not required
+Valid values   alphaartwork_counttrending
+Ordering, can be either "alpha", "artwork_count" or "trending" - default is "trending"
+Example output
+$ curl -H "X-AUTH-KEY: YOUR_API_KEY" -X POST "https://pictufy.com/api/artists/" -F "order=artwork_count"
+
+{
+    "endpoint": "artists",
+    "items": [
+        {
+            "artist_id": 438961,
+            "name": "Joxe Inazio Kuesta Garmendia",
+            "artist_type": "Documentary Photographer",
+            "url": "https://pictufy.com/artist/joxeinazio",
+            "profile_picture": "https://1x.com/images/user/61b37c3c96b1ef5ad5be2cf8aae03f6c-sq.jpg",
+            "username": "joxeinazio",
+            "artworks": 1169
+        }
+    ],
+    "status": {
+        "returned_items": 1,
+        "code": 200
+    }
+}
+Back to top
+/artist
+Returns data about an artist
+Input parameters
+artist_id
+POSTintRequired
+ID of artist to get details for
+Example output
+$ curl -H "X-AUTH-KEY: YOUR_API_KEY" -X POST "https://pictufy.com/api/artist/" -F "artist_id=438961" 
+
+{
+    "endpoint": "artist",
+    "items": [
+        {
+            "artist_id": 438961,
+            "name": "Joxe Inazio Kuesta Garmendia",
+            "artist_type": "Documentary Photographer",
+            "url": "https://pictufy.com/artist/joxeinazio",
+            "profile_picture": "https://1x.com/images/user/61b37c3c96b1ef5ad5be2cf8aae03f6c-sq.jpg",
+            "username": "joxeinazio",
+            "artworks": 1169
+            "country": "United Kingdom",
+            "biography_html": "<p>Joxe is a UK-based digital illustrator known for creating surreal fantasy-inspired art prints.</p>",
+            "biography_text": "Joxe is a UK-based digital illustrator known for creating surreal fantasy-inspired art prints.",
+        }
+    ],
+    "status": {
+        "returned_items": 1,
+        "code": 200
+    }
+}
+Back to top
+/lists
+Returns your lists
+Example output
+$ curl -H "X-AUTH-KEY: YOUR_API_KEY" -X POST "https://pictufy.com/api/lists/"
+
+{
+    "endpoint": "lists",
+    "items": [
+        {
+            "list_id": "de30edcdd3cec8162b94278b0bbbf4a6",
+            "name": "Torsdagslistan",
+            "cover": "https://1x.com/images/user/2ec74228013b2274079ccb80f3c27214-ld.jpg",
+            "last_change": "2023-02-02 13:23:51"
+        },
+        {
+            "list_id": "f4b39316bcf40a2b682f1aeb30be7fa4",
+            "name": "Monday Test List",
+            "cover": "https://1x.com/images/user/b968157c91946013acd6fc44a99c3b15-ld.jpg",
+            "last_change": "2023-01-23 14:11:44"
+        }
+    ],
+    "status": {
+        "returned_items": 2,
+        "code": 200
+    }
+}
+Back to top
+/expired
+Returns a list of artworks where licensing has ended
+Example output
+$ curl -H "X-AUTH-KEY: YOUR_API_KEY" -X POST "https://pictufy.com/api/expired/"
+
+{
+    "endpoint": "expired",
+    "items": [
+        {
+            "artwork_id": 155252,
+            "expired": "Fri Dec  1 12:29:32 CET 2022"
+        },
+        {
+            "artwork_id": 858400,
+            "expired": "Fri Dec  2 12:59:32 CET 2022"
+        }
+    ],
+    "status": {
+        "returned_items": 2,
+        "code": 200
+    }
+}
+Back to top
+/download
+Download the print file for an artwork
+Input parameters
+artwork_id
+POSTintRequired
+Download the specified artwork in maximum resolution for printing
+Example output
+$ curl -H "X-AUTH-KEY: YOUR_API_KEY" -X POST "https://pictufy.com/api/download/" -F "artwork_id=858444"
+
+{
+    "endpoint": "download",
+    "items": [
+        {
+            "url": "https://pictufy.com/api/download.php?k=969d364ebe74c92285f09ffff5ad12412",
+            "filename": "858444.jpg",
+            "download_allowed_from": "92.34.157.26"
+        }
+    ],
+    "status": {
+        "returned_items": 1,
+        "code": 200
+    }
+}

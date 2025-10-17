@@ -1,0 +1,55 @@
+I've opened the collections page, apart from the fact that it loads all 
+the collections as is (because it crashes the website) instead of loading little by little,
+ when you click on one of them it takes you to the pictufy website. When we told you about
+  integrating the API into our website it was so that everything is integrated, it can't leave the 
+  totmarc website to another website that is not ours... On the explore page it loads about 20 images
+   that don't link or load any data anywhere, sorry. And on the artists page I get a critical error 
+   on the website when we load it. I'll send you a screenshot.
+
+   Yes, exactly. That's what appears on the website. But as I mentioned, it doesn't load gradually, which makes it inefficient. 
+   When you click on a collection, it goes to an external Pictufy website. It's not stored in TotMark 
+   as it should be.
+
+Connect to the vendor's API and extract only the necessary access points (collections, artists, explore).
+
+Assign the data to WooCommerce so it displays correctly on dedicated pages.
+
+Make sure it looks consistent with your site's design and loads quickly.
+
+Keep it strictly read-only, without including payment or purchase links.
+
+This is the requirements
+
+It is not possible to link collections to the pictufy website, the user must always be on our website
+
+It has to load quickly; the website can't hang. What I think is that you should use lazy loading.
+
+
+The explore page loads 20 photos that don't link or go anywhere.
+
+And the artists page doesn't even load...
+
+I need to make sure the project meets our needs and delivery time. I've copied your initial message and capitalized additional comments.
+
+Connect to the supplier's API and extract only the necessary access points (collections, artists, explore).
+
+Assign the data to WooCommerce so it displays correctly on dedicated pages.
+
+Make sure it looks consistent with your site's design and loads quickly (this is important).
+
+Keep it strictly read-only, without including payment or purchase links.
+
+This way, your visitors can explore the catalog experience directly in Totmarc (we assume this involves having filters so the user can search and filter), but the transactional aspect is excluded, as you requested.  (IT DOESN'T HAVE TO BE ON OUR WEBSITE AT ANY TIME. WE DON'T WANT ANYONE TO KNOW THAT THE IMAGES COME FROM PICTUFY.)
+
+I can start immediately and meet your budget and deadline (YOU TOLD US IT TOOK 7 DAYS, AND AS WE'VE TOLD YOU, WE HAVE A PRESENTATION TOMORROW, WEDNESDAY, AND A CONFERENCE ON OCTOBER 21ST TO PRESENT THIS PROJECT, WHICH WE DON'T KNOW IF WE'LL BE ABLE TO PRESENT...) So, aside from what was mentioned above and regarding what has been done so far:
+
+- The collections page, apart from loading all the collections as is (because it crashes the website) instead of loading them gradually, when you click on one of them it takes you to the Pictufy website.  When we told you about integrating the API into our website, it was so that everything would be integrated. You can't leave the Totmarc website and go to another website that isn't ours...
+
+- On the explore page, it loads about 20 images that don't link or load any data.
+
+- I'm getting a critical error on the website when we load the artist page.
+
+
+
+
+
