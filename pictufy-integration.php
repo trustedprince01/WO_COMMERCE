@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Pictufy Integration
  * Description: Integrates Pictufy catalog (Collections, Artists, Artworks) into WooCommerce site
- * Version: 1.9
+ * Version: 1.9.1
  * Author: totmarc
  */
 
@@ -599,34 +599,61 @@ function pictufy_render_collection_template() {
     status_header(200);
     nocache_headers();
 
-    $collection_title_filter = function ($title) use ($collection) {
-        if (empty($collection['name'])) {
+    $collection_name = !empty($collection['name']) ? $collection['name'] : '';
+    $site_name = get_bloginfo('name');
+    $collection_full_title = $collection_name;
+
+    if ($collection_full_title && $site_name) {
+        $collection_full_title .= ' – ' . $site_name;
+    } elseif (!$collection_full_title && $site_name) {
+        $collection_full_title = $site_name;
+    }
+
+    $collection_title_filter = function ($title) use ($collection_name) {
+        if ($collection_name === '') {
             return $title;
         }
 
-        $site_name = get_bloginfo('name');
-
-        if (!empty($site_name)) {
-            return $collection['name'] . ' – ' . $site_name;
-        }
-
-        return $collection['name'];
+        return $collection_name;
     };
 
-    $document_title_filter = function ($parts) use ($collection, $collection_title_filter) {
-        if (!is_array($parts)) {
+    $document_title_filter = function ($parts) use ($collection_name, $site_name) {
+        if (!is_array($parts) || $collection_name === '') {
             return $parts;
         }
 
-        $parts['title'] = $collection_title_filter(isset($parts['title']) ? $parts['title'] : '');
+        $parts['title'] = $collection_name;
+
+        if (!empty($site_name)) {
+            $parts['site'] = $site_name;
+        }
 
         return $parts;
     };
 
-    add_filter('pre_get_document_title', $collection_title_filter, 10, 1);
-    add_filter('post_type_archive_title', $collection_title_filter, 10, 1);
-    add_filter('single_post_title', $collection_title_filter, 10, 1);
-    add_filter('document_title_parts', $document_title_filter, 10, 1);
+    $collection_document_title_filter = function ($title) use ($collection_full_title) {
+        if ($collection_full_title === '') {
+            return $title;
+        }
+
+        return $collection_full_title;
+    };
+
+    $collection_seo_title_filter = function ($title) use ($collection_full_title) {
+        if ($collection_full_title === '') {
+            return $title;
+        }
+
+        return $collection_full_title;
+    };
+
+    add_filter('pre_get_document_title', $collection_document_title_filter, 1000, 1);
+    add_filter('wpseo_title', $collection_seo_title_filter, 1000, 1);
+    add_filter('rank_math/frontend/title', $collection_seo_title_filter, 1000, 1);
+    add_filter('aioseo_title', $collection_seo_title_filter, 1000, 1);
+    add_filter('post_type_archive_title', $collection_title_filter, 1000, 1);
+    add_filter('single_post_title', $collection_title_filter, 1000, 1);
+    add_filter('document_title_parts', $document_title_filter, 1000, 1);
 
     $archive_title_filter = function ($title) use ($collection) {
         if (empty($collection['name'])) {
@@ -636,7 +663,7 @@ function pictufy_render_collection_template() {
         return $collection['name'];
     };
 
-    add_filter('get_the_archive_title', $archive_title_filter, 10, 1);
+    add_filter('get_the_archive_title', $archive_title_filter, 1000, 1);
 
     $page_title_filter = function ($title, $id = 0) use ($collection) {
         if (empty($collection['name'])) {
@@ -783,12 +810,15 @@ function pictufy_render_collection_template() {
         add_action('woodmart_after_header', 'woodmart_page_title', 10);
     }
 
-    remove_filter('pre_get_document_title', $collection_title_filter, 10);
-    remove_filter('post_type_archive_title', $collection_title_filter, 10);
-    remove_filter('single_post_title', $collection_title_filter, 10);
+    remove_filter('pre_get_document_title', $collection_document_title_filter, 1000);
+    remove_filter('wpseo_title', $collection_seo_title_filter, 1000);
+    remove_filter('rank_math/frontend/title', $collection_seo_title_filter, 1000);
+    remove_filter('aioseo_title', $collection_seo_title_filter, 1000);
+    remove_filter('post_type_archive_title', $collection_title_filter, 1000);
+    remove_filter('single_post_title', $collection_title_filter, 1000);
     remove_filter('the_title', $page_title_filter, 10);
-    remove_filter('document_title_parts', $document_title_filter, 10);
-    remove_filter('get_the_archive_title', $archive_title_filter, 10);
+    remove_filter('document_title_parts', $document_title_filter, 1000);
+    remove_filter('get_the_archive_title', $archive_title_filter, 1000);
     exit;
 }
 add_action('template_redirect', 'pictufy_render_collection_template');
@@ -857,35 +887,53 @@ function pictufy_render_artist_template() {
     status_header(200);
     nocache_headers();
 
-    $artist_title_filter = function ($title) use ($artist) {
-        if (empty($artist['name'])) {
+    $artist_name = !empty($artist['name']) ? $artist['name'] : '';
+    $site_name = get_bloginfo('name');
+    $artist_full_title = $artist_name;
+
+    if ($artist_full_title && $site_name) {
+        $artist_full_title .= ' – ' . $site_name;
+    } elseif (!$artist_full_title && $site_name) {
+        $artist_full_title = $site_name;
+    }
+
+    $artist_title_filter = function ($title) use ($artist_name) {
+        if ($artist_name === '') {
             return $title;
         }
 
-        $site_name = get_bloginfo('name');
-
-        if (!empty($site_name)) {
-            return $artist['name'] . ' – ' . $site_name;
-        }
-
-        return $artist['name'];
+        return $artist_name;
     };
 
-    add_filter('pre_get_document_title', $artist_title_filter, 10, 1);
-    add_filter('post_type_archive_title', $artist_title_filter, 10, 1);
-    add_filter('single_post_title', $artist_title_filter, 10, 1);
-
-    $document_title_filter = function ($parts) use ($artist, $artist_title_filter) {
-        if (!is_array($parts)) {
+    $artist_document_title_filter = function ($parts) use ($artist_name, $site_name) {
+        if (!is_array($parts) || $artist_name === '') {
             return $parts;
         }
 
-        $parts['title'] = $artist_title_filter(isset($parts['title']) ? $parts['title'] : '');
+        $parts['title'] = $artist_name;
+
+        if (!empty($site_name)) {
+            $parts['site'] = $site_name;
+        }
 
         return $parts;
     };
 
-    add_filter('document_title_parts', $document_title_filter, 10, 1);
+    $artist_full_title_filter = function ($title) use ($artist_full_title) {
+        if ($artist_full_title === '') {
+            return $title;
+        }
+
+        return $artist_full_title;
+    };
+
+    add_filter('pre_get_document_title', $artist_full_title_filter, 1000, 1);
+    add_filter('wpseo_title', $artist_full_title_filter, 1000, 1);
+    add_filter('rank_math/frontend/title', $artist_full_title_filter, 1000, 1);
+    add_filter('aioseo_title', $artist_full_title_filter, 1000, 1);
+    add_filter('post_type_archive_title', $artist_title_filter, 1000, 1);
+    add_filter('single_post_title', $artist_title_filter, 1000, 1);
+    add_filter('document_title_parts', $artist_document_title_filter, 1000, 1);
 
     $archive_title_filter = function ($title) use ($artist) {
         if (empty($artist['name'])) {
@@ -1077,7 +1125,7 @@ add_action('template_redirect', 'pictufy_render_artist_template');
 
 class Pictufy_API {
     private $api_url = 'https://pictufy.com/api/';
-    private $api_key = 'use_your_own_api_key';
+    private $api_key = 'your_pictufy_api_key_here';
 
     public function request($endpoint, $method = 'POST', $body = array()) {
         $args = array(
